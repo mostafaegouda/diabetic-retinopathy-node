@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const app = express();
 app.use(bodyParser.json());
-const port = 3001;
+const port = 3002;
 const host = "localhost";
 const csv = require("csvtojson");
 
@@ -18,7 +18,7 @@ function sendSMS() {
   })
   const from = "sa7ti"
   const to = "201554253515"
-  const text = 'A text message sent using the Vonage SMS API'
+  const text = 'اهلا حمدى ؛ رقم طلبك هو 0001  ؛ سيتم التواصل معك وحجزك في اقرب وحدة صحية بالقرب منك'
   vonage.message.sendSms(from, to, text, (err, responseData) => {
     if (err) {
       console.log(err);

@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const app = express();
 app.use(bodyParser.json());
-const port = 3002;
+const port = 3001;
 const host = "localhost";
 const csv = require("csvtojson");
 
@@ -11,14 +11,14 @@ const Vonage = require('@vonage/server-sdk')
 
 
 
-function sendSMS() {
+function sendSMS(name) {
   const vonage = new Vonage({
     apiKey: "897fae8d",
     apiSecret: "19evLeGC8R91yOBo"
   })
   const from = "sa7ti"
   const to = "201554253515"
-  const text = 'اهلا حمدى ؛ رقم طلبك هو 0001  ؛ سيتم التواصل معك وحجزك في اقرب وحدة صحية بالقرب منك'
+  const text = `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`
   vonage.message.sendSms(from, to, text, (err, responseData) => {
     if (err) {
       console.log(err);
@@ -58,7 +58,7 @@ app.post("/patients", async (req, res) => {
         console.error(err);
       }
     });
-    sendSMS();
+    sendSMS(name);
     res.send({ name, national_id, phone, address });
   }
 });

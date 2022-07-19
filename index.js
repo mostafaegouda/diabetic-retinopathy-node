@@ -11,25 +11,39 @@ const Vonage = require('@vonage/server-sdk')
 
 
 
-function sendSMS(name) {
-  const vonage = new Vonage({
-    apiKey: "897fae8d",
-    apiSecret: "19evLeGC8R91yOBo"
-  })
-  const from = "sa7ti"
-  const to = "201554253515"
-  const text = `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`
-  vonage.message.sendSms(from, to, text, (err, responseData) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if (responseData.messages[0]['status'] === "0") {
-        console.log("Message sent successfully.");
-      } else {
-        console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-      }
-    }
-  })
+// function sendSMS(name) {
+//   const vonage = new Vonage({
+//     apiKey: "897fae8d",
+//     apiSecret: "19evLeGC8R91yOBo"
+//   })
+//   const from = "sa7ti"
+//   const to = "201554253515"
+//   const text = `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`
+//   vonage.message.sendSms(from, to, text, (err, responseData) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       if (responseData.messages[0]['status'] === "0") {
+//         console.log("Message sent successfully.");
+//       } else {
+//         console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+//       }
+//     }
+//   })
+// }
+
+function sendSMS(name, number) {
+  const accountSid = "AC01cfdcacae1f33f550a6011f7a038d22"
+  const authToken = "aff1be4ad950a0470208e4e6f3cdcdb7";
+  const client = require('twilio')(accountSid, authToken);
+
+  client.messages
+    .create({
+      body: `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`,
+      from: '+16203128313',
+      to: `+2${number}`
+    })
+    .then(message => console.log(message.sid));
 }
 
 app.get("/", (req, res) => {
@@ -58,7 +72,7 @@ app.post("/patients", async (req, res) => {
         console.error(err);
       }
     });
-    sendSMS(name);
+    sendSMS(name, phone);
     res.send({ name, national_id, phone, address });
   }
 });

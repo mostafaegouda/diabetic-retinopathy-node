@@ -41,7 +41,7 @@ function sendSMS(name, number) {
     .create({
       body: `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`,
       from: '+16203128313',
-      to: `+2${number}`
+      to: `+201121377753`
     })
     .then(message => console.log(message.sid));
 }

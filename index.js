@@ -6,7 +6,7 @@ app.use(bodyParser.json());
 const port = 3001;
 const host = "localhost";
 const csv = require("csvtojson");
-
+require('dotenv').config();
 const Vonage = require('@vonage/server-sdk')
 
 
@@ -33,17 +33,17 @@ const Vonage = require('@vonage/server-sdk')
 // }
 
 function sendSMS(name, number) {
-  const accountSid = "AC01cfdcacae1f33f550a6011f7a038d22"
-  const authToken = "aff1be4ad950a0470208e4e6f3cdcdb7";
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
   const client = require('twilio')(accountSid, authToken);
-
   client.messages
     .create({
       body: `Hello ${name}, thanks for using FCDS Diabetic Retinopathy Detection Tool.\nYour data has been recorded and we will contact you soon`,
       from: '+16203128313',
       to: `+201121377753`
     })
-    .then(message => console.log(message.sid));
+    .then(message => console.log(message.sid))
+    .catch(err => console.log(err.message));
 }
 
 app.get("/", (req, res) => {
@@ -66,13 +66,17 @@ app.post("/patients", async (req, res) => {
     res.status(303).send("Patient Exists");
   }
   else {
+    try {
+      sendSMS(name, phone);
+    } catch (error) {
+      res.send(error.message)
+    }
     const newPatient = `\n${name},${national_id},${phone},${address}`;
     fs.appendFile("patients.csv", newPatient, (err) => {
       if (err) {
         console.error(err);
       }
     });
-    sendSMS(name, phone);
     res.send({ name, national_id, phone, address });
   }
 });
